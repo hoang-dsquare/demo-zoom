@@ -32,8 +32,25 @@
 
     function loginZoom() {
 
+        try {
+            const newWindow = popupCenter("https://zoom.us/oauth/authorize?response_type=code&client_id=" + CLIENT_ID + "&redirect_uri=" + REDIRECT_URL)
+            let getCode = setInterval(() => {
+                if (newWindow.closed) {
+                    let code = "";
+                    if ($('#zoomCode').length > 0) {
+                        code = $('#zoomCode').attr('content');
+                        $('#zoomCode').remove()
+                        getAccessTokenZoom(code);
+                    }
+                    clearInterval(getCode)
 
-        popupCenter("https://zoom.us/oauth/authorize?response_type=code&client_id=" + CLIENT_ID + "&redirect_uri=" + REDIRECT_URL)
+                }
+            }, 1000)
+
+        } catch (e) {
+            console.log(e);
+        }
+
         // var settings = {
         //     "url": "https://webexapis.com/v1/meetings",
         //     "method": "POST",
@@ -47,6 +64,24 @@
         //         client_id: CLIENT_ID,
         //     }),
         // };
+    }
+
+    function getAccessTokenZoom(code) {
+        var settings = {
+            url: "/zoom.php",
+            dataType: "json",
+            data: {
+                grant_type: "authorization_code",
+                redirect_uri: REDIRECT_URL,
+                client_id: CLIENT_ID,
+                code: code,
+                authorization: "Basic " + btoa(CLIENT_ID + ':' + SECRET_ID)
+            },
+
+        };
+        $.ajax(settings).done(function(response){
+            console.log(response);
+        });
     }
 </script>
 </body>
