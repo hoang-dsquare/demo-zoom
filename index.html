@@ -68,17 +68,21 @@
 
     function getAccessTokenZoom(code) {
         var settings = {
-            url: "/zoom.php",
+            url: "https://zoom.us/oauth/token",
             dataType: "json",
+            method: "POST",
+            headers: {
+                Authorization: "Basic " + btoa(CLIENT_ID + ':' + SECRET_ID)
+            },
             data: {
                 grant_type: "authorization_code",
                 redirect_uri: REDIRECT_URL,
                 client_id: CLIENT_ID,
                 code: code,
-                authorization: "Basic " + btoa(CLIENT_ID + ':' + SECRET_ID)
             },
 
         };
+        console.log(settings);
         $.ajax(settings).done(function(response){
             console.log(response);
         });
